@@ -1,5 +1,6 @@
 variable "ACCESS_KEY" {}
 variable "SECRET_KEY" {}
+variable "PROJECT" {}
 
 variable "REGION" {
   default = "eu-west-1"
@@ -17,7 +18,9 @@ variable "SSH_UNAME" {
   default = "ec2-user"
 }
 
-variable "PROJECT" {}
+variable "HTML_LOCATION" {
+  default = "../example_static_website"
+}
 
 source "amazon-ebs" "immutable-image" {
   access_key = var.ACCESS_KEY
@@ -35,5 +38,6 @@ build {
 
   provisioner "ansible" {
     playbook_file = "./playbook/main.yml"
+    extra_arguments = [ "--extra-vars", "html_source=${var.HTML_LOCATION}" ]
   }
 }

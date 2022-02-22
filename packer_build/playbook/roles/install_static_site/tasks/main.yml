@@ -1,1 +1,7 @@
 ---
+- name: Include HTML artefacts
+  copy:
+    src: "{{ html_source }}/"
+    dest: "/var/www/html/"
+    owner: "{{ app_user }}"
+    mode: '0755'
