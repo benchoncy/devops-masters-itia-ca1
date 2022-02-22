@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars_files:
+    - vars/default.config.yml
+
+  pre_tasks:
+    - name: Add service user
+      user:
+        name: "{{ app_user }}"
+        shell: /bin/bash
+
+  roles:
+    - role: install_apache
+    - role: install_static_site
