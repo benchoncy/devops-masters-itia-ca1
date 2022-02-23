@@ -31,6 +31,9 @@ source "amazon-ebs" "immutable-image" {
   communicator = "ssh"
   ssh_username = var.SSH_UNAME
   ami_name =  "${var.PROJECT}_{{ timestamp }}"
+  tags = {
+    Project = var.PROJECT
+  }
 }
 
 build {
