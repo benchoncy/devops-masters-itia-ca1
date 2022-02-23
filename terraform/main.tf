@@ -23,26 +23,33 @@ resource "aws_security_group" "allow_http" {
   }
 }
 
-resource "aws_elb" "web_server_elb" {
-  name = "${var.PROJECT}-${var.DEPLOYMENT}-elb"
+resource "aws_lb" "web_server_lb" {
+  name = "${var.PROJECT}-${var.ENVIORNMENT}-lb"
+  internal = false
+  load_balancer_type = "application"
   security_groups = [ aws_security_group.allow_http.id ]
-  subnets = [ aws_subnet.public_sn.id ]
+  subnets = aws_subnet.public_sns[*].id
 
-  cross_zone_load_balancing = true
-
-  health_check {
-    healthy_threshold = 2
-    unhealthy_threshold = 2
-    timeout = 3
-    interval = 30
-    target = "HTTP:80/"
+  tags = {
+    Environment = "production"
   }
+}
 
-  listener {
-    lb_port = 80
-    lb_protocol = "http"
-    instance_port = "80"
-    instance_protocol = "http"
+resource "aws_lb_target_group" "web_server_lb_tg" {
+  name = "${var.PROJECT}-${var.ENVIORNMENT}-lb-tg"
+  port = 80
+  protocol = "HTTP"
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_lb_listener" "web_server_lb_listener" {
+  load_balancer_arn = aws_lb.web_server_lb.arn
+  port = 80
+  protocol = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.web_server_lb_tg.arn
   }
 }
 
@@ -56,12 +63,12 @@ resource "aws_autoscaling_group" "web_server_as_group" {
   health_check_grace_period = var.HEALTH_CHECK_GRACE_PERIOD
   health_check_type = "ELB"
 
-  load_balancers = [ aws_elb.web_server_elb.id ]
+  target_group_arns = [ aws_lb_target_group.web_server_lb_tg.arn ]
 
   launch_configuration = aws_launch_configuration.web_server_as_conf.name
 
   force_delete = true
-  vpc_zone_identifier = [ aws_subnet.public_sn.id ]
+  vpc_zone_identifier = aws_subnet.public_sns[*].id
 
   lifecycle {
     create_before_destroy = true
@@ -69,7 +76,7 @@ resource "aws_autoscaling_group" "web_server_as_group" {
 
   tag {
     key = "Name"
-    value = "${var.PROJECT}-${var.DEPLOYMENT}-web-sever"
+    value = "${var.PROJECT}-${var.ENVIORNMENT}-web-sever"
     propagate_at_launch = true
   }
 
@@ -94,7 +101,7 @@ resource "aws_launch_configuration" "web_server_as_conf" {
 }
 
 resource "aws_autoscaling_policy" "web_server_sdp" {
-  name = "${var.PROJECT}-${var.DEPLOYMENT}-sdp"
+  name = "${var.PROJECT}-${var.ENVIORNMENT}-sdp"
   scaling_adjustment = -1
   adjustment_type = "ChangeInCapacity"
   cooldown = 300
@@ -102,7 +109,7 @@ resource "aws_autoscaling_policy" "web_server_sdp" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "web_server_cpu_sda" {
-  alarm_name = "${var.PROJECT}-${var.DEPLOYMENT}-web-server-cpu-down"
+  alarm_name = "${var.PROJECT}-${var.ENVIORNMENT}-web-server-cpu-down"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods = "3"
   metric_name = "CPUUtilization"
@@ -120,7 +127,7 @@ resource "aws_cloudwatch_metric_alarm" "web_server_cpu_sda" {
 }
 
 resource "aws_autoscaling_policy" "web_server_sup" {
-  name = "${var.PROJECT}-${var.DEPLOYMENT}-sup"
+  name = "${var.PROJECT}-${var.ENVIORNMENT}-sup"
   scaling_adjustment = 1
   adjustment_type = "ChangeInCapacity"
   cooldown = 300
@@ -128,7 +135,7 @@ resource "aws_autoscaling_policy" "web_server_sup" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "web_server_cpu_sua" {
-  alarm_name = "${var.PROJECT}-${var.DEPLOYMENT}-web-server-cpu-up"
+  alarm_name = "${var.PROJECT}-${var.ENVIORNMENT}-web-server-cpu-up"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "3"
   metric_name = "CPUUtilization"
@@ -142,9 +149,5 @@ resource "aws_cloudwatch_metric_alarm" "web_server_cpu_sua" {
   }
 
   alarm_description = "Monitor EC2 web server instance for high CPU utilization"
-  alarm_actions = [ aws_autoscaling_policy.web_server_sdp.arn ]
-}
-
-output "elb_dns_name" {
-  value = aws_elb.web_server_elb.dns_name
+  alarm_actions = [ aws_autoscaling_policy.web_server_sup.arn ]
 }
