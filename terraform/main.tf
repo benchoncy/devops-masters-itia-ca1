@@ -19,7 +19,6 @@ resource "aws_security_group" "allow_http" {
 
   tags = {
     Name = "Allow HTTP Security Group"
-    Project = var.PROJECT
   }
 }
 
@@ -29,10 +28,6 @@ resource "aws_lb" "web_server_lb" {
   load_balancer_type = "application"
   security_groups = [ aws_security_group.allow_http.id ]
   subnets = aws_subnet.public_sns[*].id
-
-  tags = {
-    Environment = "production"
-  }
 }
 
 resource "aws_lb_target_group" "web_server_lb_tg" {
@@ -79,21 +74,14 @@ resource "aws_autoscaling_group" "web_server_as_group" {
     value = "${var.PROJECT}-${var.ENVIORNMENT}-web-sever"
     propagate_at_launch = true
   }
-
-  tag {
-    key = "Project"
-    value = var.PROJECT
-    propagate_at_launch = true
-  }
 }
 
 resource "aws_launch_configuration" "web_server_as_conf" {
-  name_prefix = "web-${var.PROJECT}-"
+  name = "web-${var.PROJECT}-${var.ENVIORNMENT}-conf"
   image_id = var.AMI
   instance_type = var.INSTANCE_TYPE
 
   security_groups = [ aws_security_group.allow_http.id ]
-  associate_public_ip_address = true
 
   lifecycle {
     create_before_destroy = true

@@ -13,11 +13,9 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   instance_tenancy = "default"
-  enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.PROJECT}-${var.ENVIORNMENT}"
-    Project = var.PROJECT
+    Name = "${var.PROJECT}-${var.ENVIORNMENT}-vpc"
   }
 }
 
@@ -30,7 +28,6 @@ resource "aws_subnet" "public_sns" {
 
   tags = {
     Name = "${var.PROJECT}-${var.ENVIORNMENT}-public-sn-${count.index}"
-    Project = var.PROJECT
   }
 }                 
 
@@ -40,7 +37,6 @@ resource "aws_internet_gateway" "main_igw" {
 
   tags = {
     Name = "${var.PROJECT}-${var.ENVIORNMENT}-igw"
-    Project = var.PROJECT
   }
 }
 
@@ -54,7 +50,6 @@ resource "aws_route_table" "main_public_rt" {
 
   tags = {
     Name = "${var.PROJECT}-${var.ENVIORNMENT}-public-rt"
-    Project = var.PROJECT
   }
 }
 
