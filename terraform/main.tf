@@ -1,3 +1,14 @@
+data "aws_ami" "deployment_ami" {
+  most_recent = true
+
+  owners = var.AMI_OWNERS
+
+  filter {
+    name = "name"
+    values = ["${var.PROJECT}_${var.VERSION}*"]
+  }
+}
+
 resource "aws_security_group" "allow_http" {
   name = "allow_http"
   description = "Allow HTTP inbound traffic"
@@ -22,6 +33,23 @@ resource "aws_security_group" "allow_http" {
   }
 }
 
+resource "aws_security_group" "allow_ssh" {
+  name = "allow_ssh"
+  description = "Allow SSH inbound traffic"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "Allow SSH Security Group"
+  }
+}
+
 resource "aws_lb" "web_server_lb" {
   name = "${var.PROJECT}-${var.ENVIORNMENT}-lb"
   internal = false
@@ -31,13 +59,13 @@ resource "aws_lb" "web_server_lb" {
 }
 
 resource "aws_lb_target_group" "web_server_lb_tg" {
-  name = "${var.PROJECT}-${var.ENVIORNMENT}-lb-tg"
+  name = "web-server-lb-tg"
   port = 80
   protocol = "HTTP"
   vpc_id = aws_vpc.main.id
 }
 
-resource "aws_lb_listener" "web_server_lb_listener" {
+resource "aws_lb_listener" "web_server_lb_listener_http" {
   load_balancer_arn = aws_lb.web_server_lb.arn
   port = 80
   protocol = "HTTP"
@@ -74,14 +102,31 @@ resource "aws_autoscaling_group" "web_server_as_group" {
     value = "${var.PROJECT}-${var.ENVIORNMENT}-web-sever"
     propagate_at_launch = true
   }
+
+  tag {
+    key = "Version"
+    value = var.VERSION
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "Enviornment"
+    value = var.ENVIORNMENT
+    propagate_at_launch = true
+  }
 }
 
 resource "aws_launch_configuration" "web_server_as_conf" {
   name = "web-${var.PROJECT}-${var.ENVIORNMENT}-conf"
-  image_id = var.AMI
+  image_id = data.aws_ami.deployment_ami.image_id
   instance_type = var.INSTANCE_TYPE
 
-  security_groups = [ aws_security_group.allow_http.id ]
+  security_groups = [ 
+    aws_security_group.allow_http.id,
+    aws_security_group.allow_ssh.id
+  ]
+
+  key_name = var.KEY_NAME
 
   lifecycle {
     create_before_destroy = true
