@@ -45,7 +45,3 @@ variable "TARGET_INSTANCES" {
 variable "HEALTH_CHECK_GRACE_PERIOD" {
   default = 300
 }
-
-variable "LOG_RETENTION_DAYS" {
-  default = 30
-}

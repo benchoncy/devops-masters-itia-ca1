@@ -37,6 +37,10 @@ variable "HTML_LOCATION" {
   default = "../example_static_website"
 }
 
+variable "PLAYBOOK_LOCATION" {
+  default = "./playbook/main.yml"
+}
+
 source "amazon-ebs" "immutable-image" {
   access_key = var.ACCESS_KEY
   secret_key = var.SECRET_KEY
@@ -58,7 +62,7 @@ build {
   sources = ["sources.amazon-ebs.immutable-image"]
 
   provisioner "ansible" {
-    playbook_file = "./playbook/main.yml"
+    playbook_file = "${var.PLAYBOOK_LOCATION}"
     extra_arguments = [ "--extra-vars", "html_source=${var.HTML_LOCATION}" ]
   }
 }
