@@ -85,4 +85,4 @@ To destroy the deployed resources, run:
 terraform_destroy.sh
 ```
 
-Additionally, the build AMI image and Snapshot should be deregistered/deleted from AWS under EC2 > AMIs and EC2 > Snapshots respectively.
+Additionally, the build AMI image and Snapshot should be deregistered/deleted from AWS under `EC2 > AMIs` and `EC2 > Snapshots` respectively.
