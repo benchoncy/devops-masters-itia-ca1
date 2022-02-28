@@ -2,6 +2,8 @@
 
 This repository holds a proof of concept web application deployment as part of a continuous assesment.
 
+Allows creation of an example AMI image and deployment of said image in a virtual private cloud in a load balanced autoscaling group, spread across multiple availability zones. A preset CloudWatch dashboard is created as part of the deployment.
+
 ## Build
 
 ### Requirements
