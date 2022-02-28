@@ -1,0 +1,130 @@
+{
+    "widgets": [
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "UnHealthyHostCount", "TargetGroup", "targetgroup/${target_group.name}/${target_group.arn_suffix}", "LoadBalancer", "app/${load_balancer.name}/${load_balancer.arn_suffix}", { "label": "${target_group.name}" } ]
+                ],
+                "region": "${region}",
+                "stat": "Average",
+                "title": "Unhealthy Hosts",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 18,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "targetgroup/${target_group.name}/${target_group.arn_suffix}", "LoadBalancer", "app/${load_balancer.name}/${load_balancer.arn_suffix}", { "label": "${target_group.name}" } ]
+                ],
+                "region": "${region}",
+                "stat": "Average",
+                "title": "Healthy Hosts",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 6,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/${target_group.name}/${target_group.arn_suffix}", "LoadBalancer", "app/${load_balancer.name}/${load_balancer.arn_suffix}", { "label": "${target_group.name}" } ]
+                ],
+                "region": "${region}",
+                "stat": "Average",
+                "title": "Target Response Time",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "RequestCount", "TargetGroup", "targetgroup/${target_group.name}/${target_group.arn_suffix}", "LoadBalancer", "app/${load_balancer.name}/${load_balancer.arn_suffix}", { "label": "${target_group.name}" } ]
+                ],
+                "region": "${region}",
+                "stat": "Sum",
+                "title": "Requests",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 6,
+            "x": 6,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "TargetConnectionErrorCount", "TargetGroup", "targetgroup/${target_group.name}/${target_group.arn_suffix}", "LoadBalancer", "app/${load_balancer.name}/${load_balancer.arn_suffix}", { "label": "${target_group.name}" } ]
+                ],
+                "region": "${region}",
+                "stat": "Sum",
+                "title": "Target connection errors",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 6,
+            "type": "metric",
+            "properties": {
+                "period": 60,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "RequestCountPerTarget", "TargetGroup", "targetgroup/${target_group.name}/${target_group.arn_suffix}", "LoadBalancer", "app/${load_balancer.name}/${load_balancer.arn_suffix}", { "label": "${target_group.name}" } ]
+                ],
+                "region": "${region}",
+                "stat": "Sum",
+                "title": "Request Count Per Target",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        }
+    ]
+}

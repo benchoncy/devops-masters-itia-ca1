@@ -42,7 +42,7 @@ resource "aws_security_group" "allow_ssh" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.ALLOWED_SSH_SOURCES
   }
 
   tags = {
@@ -183,4 +183,9 @@ resource "aws_cloudwatch_metric_alarm" "web_server_cpu_sua" {
 
   alarm_description = "Monitor EC2 web server instance for high CPU utilization"
   alarm_actions = [ aws_autoscaling_policy.web_server_sup.arn ]
+}
+
+resource "aws_cloudwatch_dashboard" "web" {
+  dashboard_name = "${var.PROJECT}-${var.ENVIORNMENT}-web-dashboard"
+  dashboard_body = templatefile("${path.module}/dashboard.json.tftpl", { target_group = aws_lb_target_group.web_server_lb_tg, load_balancer =  aws_lb.web_server_lb, region=var.REGION})
 }

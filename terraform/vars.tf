@@ -25,6 +25,11 @@ variable "SUBNET_PREFIX_CIDR" {
   default = "10.0.0.0/24"
 }
 
+variable "ALLOWED_SSH_SOURCES" {
+  type = list(string)
+  default = ["0.0.0.0/0"]
+}
+
 variable "MAX_INSTANCES" {
   default = 6
 }
