@@ -77,3 +77,12 @@ This method assumes you have an `override.tfvars` file in the `/terraform/` dire
 | `MIN_INSTANCES` | `2` | Min allowed instances at one time |
 | `TARGET_INSTANCES` | `3` | Target number of instances at deployment time |
 | `HEALTH_CHECK_GRACE_PERIOD` | `300` | Number of seconds between health checks for autoscaling |
+
+### Teardown
+
+To destroy the deployed resources, run:
+```shell
+terraform_destroy.sh
+```
+
+Additionally, the build AMI image and Snapshot should be deregistered/deleted from AWS under EC2 > AMIs and EC2 > Snapshots respectively.
