@@ -59,7 +59,7 @@ resource "aws_lb" "web_server_lb" {
 }
 
 resource "aws_lb_target_group" "web_server_lb_tg" {
-  name = "web-server-lb-tg"
+  name = "${var.PROJECT}-${var.ENVIORNMENT}-lb-tg"
   port = 80
   protocol = "HTTP"
   vpc_id = aws_vpc.main.id
