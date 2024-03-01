@@ -86,3 +86,5 @@ terraform_destroy.sh
 ```
 
 Additionally, the build AMI image and Snapshot should be deregistered/deleted from AWS under `EC2 > AMIs` and `EC2 > Snapshots` respectively.
+
+> Note: This repo is part of a university assignment, assume all decisions made for experimentation and learning and not for long-term maintainability.
